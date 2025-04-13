@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Code Genius HLS Extractor",
+  "version": "1.0",
+  "description": "Code Genius 웹사이트에서 HLS 스트림 정보를 추출합니다.",
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://educodegenius.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

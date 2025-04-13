@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>HLS Stream 목록</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 1rem; }
+    h1 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+    ul { list-style: none; padding: 0; }
+    li { padding: 0.3rem 0; border-bottom: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h1>감지된 HLS 스트림</h1>
+  <ul id="streamList"></ul>
+  
+  <script>
+    // 저장소에 있는 추적된 HLS 스트림 목록을 불러옵니다.
+    chrome.storage.local.get({hlsStreams: []}, function(result){
+      const listEl = document.getElementById("streamList");
+      if(result.hlsStreams.length === 0) {
+        listEl.innerHTML = "<li>아직 감지된 스트림이 없습니다.</li>";
+      } else {
+        result.hlsStreams.forEach(stream => {
+          const li = document.createElement("li");
+          li.textContent = `${stream.url} (${stream.time})`;
+          listEl.appendChild(li);
+        });
+      }
+    });
+  </script>
+</body>
+</html>

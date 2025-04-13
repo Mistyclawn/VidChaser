@@ -1,28 +1,30 @@
 // background.js
 chrome.webRequest.onCompleted.addListener(
   function(details) {
-    // 응답 헤더에서 content-type을 확인합니다.
+    // 응답 헤더에서 content-type 값을 확인
     const contentTypeHeader = details.responseHeaders.find(header =>
       header.name.toLowerCase() === 'content-type'
     );
     if (contentTypeHeader && contentTypeHeader.value.includes('application/vnd.apple.mpegurl')) {
-      // HLS 스트림(m3u8) 요청이 감지되었습니다.
       console.log("Detected HLS stream:", details.url);
       
-      // 추가 메타데이터가 필요하다면, details 객체의 다른 속성을 이용할 수 있습니다.
-      // 예: requestTime, responseHeaders 중 다른 헤더(예: content-length) 등...
-      
-      // 추출된 정보를 저장하거나 팝업으로 전송할 수도 있습니다.
-      chrome.storage.local.get({hlsStreams: []}, function(result){
+      // 현재 저장된 스트림 리스트를 가져와서 추가
+      chrome.storage.local.get({ hlsStreams: [] }, function(result) {
         const streams = result.hlsStreams;
-        streams.push({
-          url: details.url,
-          time: new Date(details.timeStamp).toLocaleString()
-        });
-        chrome.storage.local.set({hlsStreams: streams});
+        // 간단히 중복을 피하기 위해 URL 기준으로 확인
+        if (!streams.find(s => s.url === details.url)) {
+          streams.push({
+            url: details.url,
+            time: new Date(details.timeStamp).toLocaleString(),
+            tabId: details.tabId
+          });
+          chrome.storage.local.set({ hlsStreams: streams }, function() {
+            console.log("새 스트림 저장됨:", details.url);
+          });
+        }
       });
     }
   },
-  { urls: ["*://educodegenius.com/*"] },
+  { urls: ["<all_urls>"] },
   ["responseHeaders"]
 );

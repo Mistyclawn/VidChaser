@@ -1,20 +1,22 @@
 {
   "manifest_version": 3,
-  "name": "Code Genius HLS Extractor",
-  "version": "1.0",
-  "description": "Code Genius 웹사이트에서 HLS 스트림 정보를 추출합니다.",
+  "name": "Global HLS Stream Extractor",
+  "version": "1.1.0",
+  "description": "모든 웹페이지에서 HLS 스트림(m3u8) 요청을 감지하여 추출합니다.",
   "permissions": [
     "webRequest",
     "webRequestBlocking",
-    "scripting"
+    "scripting",
+    "storage"
   ],
   "host_permissions": [
-    "*://educodegenius.com/*"
+    "<all_urls>"
   ],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_title": "HLS Stream 추적기"
   }
 }

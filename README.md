@@ -1,3 +1,3 @@
 # VidChaser
 Mistyclawn
-Aivle vid chaser
+Aivle VIDEO Chaser

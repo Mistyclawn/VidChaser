@@ -4,29 +4,52 @@
   <meta charset="UTF-8">
   <title>HLS Stream 목록</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 1rem; }
+    body { font-family: Arial, sans-serif; padding: 1rem; width: 300px; }
     h1 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+    #refreshBtn { margin-bottom: 1rem; padding: 0.4rem 0.8rem; cursor: pointer; }
     ul { list-style: none; padding: 0; }
-    li { padding: 0.3rem 0; border-bottom: 1px solid #ccc; }
+    li { padding: 0.3rem 0; border-bottom: 1px solid #ccc; word-wrap: break-word; }
+    #clearBtn { margin-top: 10px; padding: 0.4rem 0.8rem; cursor: pointer; background: #fdd; border: 1px solid #f99; }
   </style>
 </head>
 <body>
   <h1>감지된 HLS 스트림</h1>
+  <button id="refreshBtn">새로고침</button>
   <ul id="streamList"></ul>
-  
+  <button id="clearBtn">스트림 목록 초기화</button>
+
   <script>
-    // 저장소에 있는 추적된 HLS 스트림 목록을 불러옵니다.
-    chrome.storage.local.get({hlsStreams: []}, function(result){
-      const listEl = document.getElementById("streamList");
-      if(result.hlsStreams.length === 0) {
-        listEl.innerHTML = "<li>아직 감지된 스트림이 없습니다.</li>";
-      } else {
-        result.hlsStreams.forEach(stream => {
-          const li = document.createElement("li");
-          li.textContent = `${stream.url} (${stream.time})`;
-          listEl.appendChild(li);
-        });
-      }
+    // 스트림 목록 표시 함수
+    function updateStreamList() {
+      chrome.storage.local.get({ hlsStreams: [] }, function(result) {
+        const listEl = document.getElementById("streamList");
+        listEl.innerHTML = ""; // 기존 내용 비우기
+        if (result.hlsStreams.length === 0) {
+          listEl.innerHTML = "<li>아직 감지된 스트림이 없습니다.</li>";
+        } else {
+          result.hlsStreams.forEach(stream => {
+            const li = document.createElement("li");
+            li.textContent = `${stream.url} (${stream.time})`;
+            listEl.appendChild(li);
+          });
+        }
+      });
+    }
+
+    // 새로고침 버튼 클릭 시 목록 업데이트
+    document.getElementById("refreshBtn").addEventListener("click", function() {
+      updateStreamList();
+    });
+
+    // 초기 로딩 시 목록 표시
+    updateStreamList();
+
+    // 초기화 버튼: 저장소 초기화
+    document.getElementById("clearBtn").addEventListener("click", function() {
+      chrome.storage.local.set({ hlsStreams: [] }, function() {
+        updateStreamList();
+        alert("스트림 목록이 초기화되었습니다.");
+      });
     });
   </script>
 </body>
